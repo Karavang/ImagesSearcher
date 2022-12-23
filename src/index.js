@@ -2,15 +2,17 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import debounce from 'lodash.debounce';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
-// Ожидание окончания ввода
+import axios from 'axios';
+// Ожидание окончания ввода и ключ
 const DEBOUNCE_DELAY = 300;
+const API_KEY = '32188250-5588add6a92db6c3bf4a2a30f';
 // Переменные
 const refs={
   input:document.querySelector('.input'),
   gallery:document.querySelector('.gallery'),
 };
 // Слушатель на ввод
-refs.input.addEventListener('input', debounce(searchCountry, DEBOUNCE_DELAY));
+refs.input.addEventListener('input', debounce(search, DEBOUNCE_DELAY));
 // Из 7 работы галерея
 const galleryItemMarkup = creatGalleryMarkup(galleryItems);
 galleryItem.insertAdjacentHTML("beforeend", galleryItemMarkup);
@@ -32,15 +34,12 @@ const lightbox = new SimpleLightbox(".gallery__item", {
 });
 	
 // Пример с сайта библиотеки
-var API_KEY = '32188250-5588add6a92db6c3bf4a2a30f';
-var URL = "https://pixabay.com/api/?key="+API_KEY+"&q="+encodeURIComponent('red roses');
-$.getJSON(URL, function(data){
-if (parseInt(data.totalHits) > 0)
-    $.each(data.hits, function(i, hit){ console.log(hit.pageURL); });
-else
-    console.log('No hits');
-});
-
+function getContent(){
+const URL = fetch("https://pixabay.com/api/?key="+API_KEY+"&q="+encodeURIComponent(search));
+console.log(refs.input);
+axios.get(URL).then(res=>res.data).then(({articles})=>render(articles)).catch(error=>console.log(error))
+}
+refs.input.addEventListener('input',debounce(createImage, DEBOUNCE_DELAY));
 // Карточка
 function createImage(images) {
   return images.map((image) => `<div class="photo-card">
