@@ -1,6 +1,6 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import debounce from 'lodash.debounce';
-import SimpleLightbox from "simplelightbox";
+// import { galleryItems } from "./gallery-items.js";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import axios from 'axios';
 // Ожидание окончания ввода и ключ
@@ -24,7 +24,13 @@ fetch(URL).then(res=>{
   if(res.status !== 200){
     throw new Error(res.totalHits)
   }
-
+  if(res.total===0){
+    function errorFunc() {
+        Notify.failure('Oops, there is no country with that name', {
+          position: 'center-top',
+        });
+    }
+  }
   return res.json();
 }).then(({hits})=>{createImage(hits)});
 
@@ -32,8 +38,13 @@ fetch(URL).then(res=>{
 // axios.get(URL).then(res=>res.data).then(({articles})=>render(articles)).catch(error=>console.log(error))
 }
 
+
 function createImage(hits) {
+
   refs.gallery.innerHTML='';
+  Notify.success(`Hooray! We found ${hits.total} images.`, {
+    position: 'center-top',
+  });
   hits.forEach(({downloads,likes,comments,views,tags,webformatURL,largeImageURL}) => {
     const card = `<div class="photo-card">
   <a href="${largeImageURL}">
@@ -56,7 +67,7 @@ function createImage(hits) {
 </div>`
 refs.gallery.insertAdjacentHTML('beforeend',card )});
 };
-const lightbox = new SimpleLightbox(".photo-card", {
+const lightbox = new SimpleLightbox(".gallery-image", {
   captionsData: "alt",
   captionDelay: 250,
 });
