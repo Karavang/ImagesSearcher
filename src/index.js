@@ -26,15 +26,15 @@ fetch(URL).then(res=>{
   }
 
   return res.json();
-}).then(({articles})=>{createImage(articles)});
+}).then(({hits})=>{createImage(hits)});
 
 
 // axios.get(URL).then(res=>res.data).then(({articles})=>render(articles)).catch(error=>console.log(error))
 }
 
-function createImage(articles) {
+function createImage(hits) {
   refs.gallery.innerHTML='';
-  articles.forEach(({downloads,likes,comments,views,tags,webformatURL,largeImageURL}) => {
+  hits.forEach(({downloads,likes,comments,views,tags,webformatURL,largeImageURL}) => {
     const card = `<div class="photo-card">
   <a href="${largeImageURL}">
 <img src="${webformatURL}" alt="${tags}" class="gallery-image" loading="lazy" />
@@ -56,6 +56,10 @@ function createImage(articles) {
 </div>`
 refs.gallery.insertAdjacentHTML('beforeend',card )});
 };
+const lightbox = new SimpleLightbox(".photo-card", {
+  captionsData: "alt",
+  captionDelay: 250,
+});
 
 
 

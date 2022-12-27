@@ -21,3 +21,16 @@
     height: 30px;
     width: 30px;
 }
+.gallery-image{
+    max-width: 300px;
+}
+.photo-card{
+    
+}
+.gallery{
+    display: flex;
+   padding-top: 20px;
+    justify-content: center;
+    padding-left: 5px;
+    flex-wrap: wrap;
+}
