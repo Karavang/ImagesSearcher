@@ -42,9 +42,12 @@ fetch(URL).then(res=>{
 function createImage(hits) {
 
   refs.gallery.innerHTML='';
-  Notify.success(`Hooray! We found ${hits.total} images.`, {
+  if(hits.length!==0){ Notify.success(`Hooray! We found ${hits.length} images.`, {
     position: 'center-top',
-  });
+  });}
+  if(hits.length===0){ Notify.failure(`Sorry, there are no images matching your search query. Please try again.`, {
+    position: 'center-top',
+  });}
   hits.forEach(({downloads,likes,comments,views,tags,webformatURL,largeImageURL}) => {
     const card = `<div class="photo-card">
   <a href="${largeImageURL}">
@@ -66,6 +69,8 @@ function createImage(hits) {
 </div>
 </div>`
 refs.gallery.insertAdjacentHTML('beforeend',card )});
+
+
 };
 const lightbox = new SimpleLightbox(".gallery-image", {
   captionsData: "alt",
