@@ -4,7 +4,7 @@
 // 4.Если успею,сделать Simplelightbox
 
 
-
+import throttle from 'lodash.throttle';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import debounce from 'lodash.debounce';
 // import { galleryItems } from "./gallery-items.js";
@@ -21,12 +21,13 @@ const refs={
 };
 // Слушатель на ввод
 refs.button.addEventListener('click',  getContent);
-
-
-// Пример с сайта библиотеки
+let currentPage = 1;
+let totalPages;
+console.log(totalPages)
+// Получение данных
 function getContent(e,images){
 e.preventDefault();
-const URL = "https://pixabay.com/api/?key="+API_KEY+"&q="+encodeURIComponent(refs.input.value)+"&image_type=photo&orientation=horizontal&safesearch=true&per_page=40";
+const URL = "https://pixabay.com/api/?key="+API_KEY+"&q="+encodeURIComponent(refs.input.value)+`&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${currentPage}`;
 fetch(URL).then(res=>{
   if(res.status !== 200){
     throw new Error(res.totalHits)
@@ -45,8 +46,9 @@ fetch(URL).then(res=>{
 // axios.get(URL).then(res=>res.data).then(({articles})=>render(articles)).catch(error=>console.log(error))
 }
 
-
-function createImage(hits,total) {
+// Функция на создание карточек
+const createImage = (hits,total) =>{
+  totalPages = total/40;
 
   refs.gallery.innerHTML='';
   if(hits.length!==0){ Notify.success(`Hooray! We found ${total} images.`, {
@@ -84,6 +86,78 @@ const lightbox = new SimpleLightbox(".gallery-image", {
   captionDelay: 250,
 });
 
+// Подгрузка карточек(пока не работает,остановился на подключении функций и спросил у ментора)
+window.addEventListener('load', async e => {
+
+  const elements = createImage(hits,total);
+  
+  refs.gallery.innerHTML = '';
+  refs.gallery.insertAdjacentHTML('beforeend', elements)
+})
+
+
+
+const throttled = throttle(async ()=>{
+  
+  if (isEverythingLoaded) return;
+
+  const body = document.body, html = document.documentElement;
+  const totalHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+  const pixelsToBottom = totalHeight - window.innerHeight - window.scrollY;
+  
+  if (pixelsToBottom < 450) {
+    currentPage += 1;
+    isEverythingLoaded = currentPage >= totalPages
+    
+    const articles = await getContent(e,images);
+    const elements = createArticlesElements(articles);
+
+    refs.articles.insertAdjacentHTML('beforeend', elements)
+  }
+}, 500)
+
+window.addEventListener('scroll', throttled )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// window.addEventListener('scroll',async e=>{
+// const body = document.body,html=document.documentElement;
+// const totalHeight = Math.max(body.scrollHeight,body.offsetHeight,html.clientHeight,html.scrollHeight,html.offsetHeight);
+
+// const pixelsToBottom = totalHeight - window.innerHeight - window.scrollY;
+// console.log(pixelsToBottom);
+
+// if(pixelsToBottom <450){
+//   currentPage+=1; 
+//   const articleses = getContent();
+//   const pageOne = createImage(articleses);
+//   refs.gallery.insertAdjacentHTML('beforeend',pageOne)
+// }
+
+// })
 
 
 // Из 7 работы галерея
