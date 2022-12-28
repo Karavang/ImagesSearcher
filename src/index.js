@@ -1,3 +1,10 @@
+// 1.Сделать чтобы по скроллу прогружались картинки дальше(по дефолту 20 картинок,сделать 1 дефолт а дальше по скроллу)
+// 2.Раздел Пагинация в ДЗ
+// 3.Заменить fetch и then на Axios и async/await и обернуть это в try/catch
+// 4.Если успею,сделать Simplelightbox
+
+
+
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import debounce from 'lodash.debounce';
 // import { galleryItems } from "./gallery-items.js";
@@ -19,7 +26,7 @@ refs.button.addEventListener('click',  getContent);
 // Пример с сайта библиотеки
 function getContent(e,images){
 e.preventDefault();
-const URL = "https://pixabay.com/api/?key="+API_KEY+"&q="+encodeURIComponent(refs.input.value)+"&image_type=photo&orientation=horizontal&safesearch=true";
+const URL = "https://pixabay.com/api/?key="+API_KEY+"&q="+encodeURIComponent(refs.input.value)+"&image_type=photo&orientation=horizontal&safesearch=true&per_page=40";
 fetch(URL).then(res=>{
   if(res.status !== 200){
     throw new Error(res.totalHits)
@@ -32,17 +39,17 @@ fetch(URL).then(res=>{
     }
   }
   return res.json();
-}).then(({hits})=>{createImage(hits)});
+}).then(({hits,total})=>{createImage(hits,total)});
 
 
 // axios.get(URL).then(res=>res.data).then(({articles})=>render(articles)).catch(error=>console.log(error))
 }
 
 
-function createImage(hits) {
+function createImage(hits,total) {
 
   refs.gallery.innerHTML='';
-  if(hits.length!==0){ Notify.success(`Hooray! We found ${hits.length} images.`, {
+  if(hits.length!==0){ Notify.success(`Hooray! We found ${total} images.`, {
     position: 'center-top',
   });}
   if(hits.length===0){ Notify.failure(`Sorry, there are no images matching your search query. Please try again.`, {
