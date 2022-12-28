@@ -49,7 +49,7 @@ fetch(URL).then(res=>{
 
 // Функция на создание карточек
 const createImage = (hits,total) =>{
-  totalPages = 1;
+  totalPages = total/40;
 
   refs.gallery.innerHTML='';
   if(total!==0){ Notify.success(`Hooray! We found ${total} images.`, {
@@ -88,8 +88,8 @@ const lightbox = new SimpleLightbox(".gallery-image", {
 });
 
 // Подгрузка карточек(пока не работает,остановился на подключении функций и спросил у ментора)
-window.addEventListener('load', async e => {
-
+window.addEventListener('load', async (e,images,hits,total) => {
+  const articles = await getContent(e,images);
   const elements = createImage(hits,total);
   
   refs.gallery.innerHTML = '';
@@ -104,9 +104,7 @@ const throttled = throttle(async (e,images,articles)=>{
 
   const body = document.body, html = document.documentElement;
   const totalHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-
   const pixelsToBottom = totalHeight - window.innerHeight - window.scrollY;
-  console.log(totalPages);
   if (pixelsToBottom < 450) {
     currentPage += 1;
     isEverythingLoaded = currentPage >= totalPages
