@@ -23,6 +23,7 @@ const refs={
 refs.button.addEventListener('click',  getContent);
 let currentPage = 1;
 let totalPages;
+let isEverythingLoaded;
 console.log(totalPages)
 // Получение данных
 function getContent(e,images){
@@ -48,13 +49,13 @@ fetch(URL).then(res=>{
 
 // Функция на создание карточек
 const createImage = (hits,total) =>{
-  totalPages = total/40;
+  totalPages = 1;
 
   refs.gallery.innerHTML='';
-  if(hits.length!==0){ Notify.success(`Hooray! We found ${total} images.`, {
+  if(total!==0){ Notify.success(`Hooray! We found ${total} images.`, {
     position: 'center-top',
   });}
-  if(hits.length===0){ Notify.failure(`Sorry, there are no images matching your search query. Please try again.`, {
+  if(total===0){ Notify.failure(`Sorry, there are no images matching your search query. Please try again.`, {
     position: 'center-top',
   });}
   hits.forEach(({downloads,likes,comments,views,tags,webformatURL,largeImageURL}) => {
@@ -97,7 +98,7 @@ window.addEventListener('load', async e => {
 
 
 
-const throttled = throttle(async ()=>{
+const throttled = throttle(async (e,images,articles)=>{
   
   if (isEverythingLoaded) return;
 
@@ -105,19 +106,19 @@ const throttled = throttle(async ()=>{
   const totalHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
 
   const pixelsToBottom = totalHeight - window.innerHeight - window.scrollY;
-  
+  console.log(totalPages);
   if (pixelsToBottom < 450) {
     currentPage += 1;
     isEverythingLoaded = currentPage >= totalPages
     
     const articles = await getContent(e,images);
-    const elements = createArticlesElements(articles);
+    const elements = createImage(articles);
 
     refs.articles.insertAdjacentHTML('beforeend', elements)
   }
 }, 500)
 
-window.addEventListener('scroll', throttled )
+window.addEventListener('scroll', throttled );
 
 
 
@@ -143,40 +144,3 @@ window.addEventListener('scroll', throttled )
 
 
 
-// window.addEventListener('scroll',async e=>{
-// const body = document.body,html=document.documentElement;
-// const totalHeight = Math.max(body.scrollHeight,body.offsetHeight,html.clientHeight,html.scrollHeight,html.offsetHeight);
-
-// const pixelsToBottom = totalHeight - window.innerHeight - window.scrollY;
-// console.log(pixelsToBottom);
-
-// if(pixelsToBottom <450){
-//   currentPage+=1; 
-//   const articleses = getContent();
-//   const pageOne = createImage(articleses);
-//   refs.gallery.insertAdjacentHTML('beforeend',pageOne)
-// }
-
-// })
-
-
-// Из 7 работы галерея
-// const galleryItemMarkup = creatGalleryMarkup(galleryItems);
-// galleryItem.insertAdjacentHTML("beforeend", galleryItemMarkup);
-
-// function creatGalleryMarkup(galleryItems) {
-//   return galleryItems
-//     .map(({ preview, original, description }) => {
-//       return `<li>
-//          <a class="gallery__item" href="${original}">
-//   <img class="gallery__image" src="${preview}" alt="${description}" />
-// </a>
-//        </li>`;
-//     })
-//     .join("");
-// }
-// const lightbox = new SimpleLightbox(".gallery__item", {
-//   captionsData: "alt",
-//   captionDelay: 250,
-// });
-	
