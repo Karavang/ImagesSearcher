@@ -33,13 +33,6 @@ fetch(URL).then(res=>{
   if(res.status !== 200){
     throw new Error(res.totalHits)
   }
-  if(res.total===0){
-    function errorFunc() {
-        Notify.failure('Oops, there is no country with that name', {
-          position: 'center-top',
-        });
-    }
-  }
   return res.json();
 }).then(({hits,total})=>{createImage(hits,total)});
 
