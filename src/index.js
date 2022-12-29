@@ -51,7 +51,7 @@ const createImage = (hits,total) =>{
   if(total===0){ Notify.failure(`Sorry, there are no images matching your search query. Please try again.`, {
     position: 'center-top',
   });}
-  hits.forEach(({downloads,likes,comments,views,tags,webformatURL,largeImageURL}) => {
+  hits.map(({downloads,likes,comments,views,tags,webformatURL,largeImageURL}) => {
     const card = `<div class="photo-card">
   <a href="${largeImageURL}">
 <img src="${webformatURL}" alt="${tags}" class="gallery-image" loading="lazy" />
@@ -81,13 +81,13 @@ const lightbox = new SimpleLightbox(".gallery-image", {
 });
 
 // Подгрузка карточек(пока не работает,остановился на подключении функций и спросил у ментора)
-window.addEventListener('load', async (e,images,hits,total) => {
-  const articles = await getContent(e,images);
-  const elements = createImage(hits,total);
+// window.addEventListener('load', async (e,images,hits,total) => {
+//   const articles = await getContent(e,images);
+//   const elements = createImage(hits,total);
   
-  refs.gallery.innerHTML = '';
-  refs.gallery.insertAdjacentHTML('beforeend', elements)
-})
+//   refs.gallery.innerHTML = '';
+//   refs.gallery.insertAdjacentHTML('beforeend', elements)
+// })
 
 
 
