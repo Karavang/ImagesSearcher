@@ -4,10 +4,11 @@ import axios from 'axios';
  
 
 const API_KEY = '32188250-5588add6a92db6c3bf4a2a30f';
-let currentPage = 1;
+
 let observerTarget = null;
 let scoller = 1;
 let scoreError = 1;
+let currentPage = 1;
 const refs = {
   input: document.querySelector('.input'),
   gallery: document.querySelector('.gallery'),
@@ -30,6 +31,7 @@ refs.button.addEventListener('click',  getContent);
 // Получение данных
 async function getContent(e){
 e.preventDefault();
+currentPage = 1;
 scoller = 1;
 scoreError = 1;
 refs.gallery.innerHTML = '';
@@ -42,13 +44,7 @@ try {
   const res = await axios.get(URL);
   const { hits, total } = res.data
   createImages(hits, total);
-  if(hits.length < 40 && scoreError===1){ 
-    Notify.failure(`We're sorry, but you've reached the end of search results.`, {
-      position: 'center-top',
-    });
-    scoreError=2;
-    return;
-  }
+ 
 
   observerTarget = refs.gallery.lastElementChild;
   if (observerTarget) observer.observe(observerTarget);
@@ -125,6 +121,13 @@ async function onScrollHandler() {
     lightbox.refresh();
     observerTarget = refs.gallery.lastElementChild;
     observer.observe(observerTarget);
+    if(hits.length < 40 && scoreError===1){ 
+      Notify.failure(`We're sorry, but you've reached the end of search results.`, {
+        position: 'center-top',
+      });
+      scoreError=2;
+      return;
+    }
   } catch (error) {
     console.log(error);
   }
