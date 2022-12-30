@@ -6,6 +6,7 @@ const API_KEY = '32188250-5588add6a92db6c3bf4a2a30f';
 let currentPage = 1;
 let observerTarget = null;
 let scoller = 1;
+let scoreError = 1;
 const refs = {
   input: document.querySelector('.input'),
   gallery: document.querySelector('.gallery'),
@@ -29,6 +30,7 @@ refs.button.addEventListener('click',  getContent);
 async function getContent(e){
 e.preventDefault();
 scoller = 1;
+scoreError = 1;
 refs.gallery.innerHTML = '';
 const query = refs.input.value.trim();
 if (!query) return;
@@ -39,10 +41,11 @@ try {
   const res = await axios.get(URL);
   const { hits, total } = res.data
   createImages(hits, total);
-  if(hits.length === total){ 
+  if(hits.length === total&& scoreError===1){ 
     Notify.failure(`No more images to fetch.`, {
       position: 'center-top',
     });
+    scoreError=2;
     return;
   }
 
@@ -53,33 +56,7 @@ try {
 }
 }
 
-async function onScrollHandler() {
-  observer.unobserve(observerTarget);
-  currentPage += 1;
-  const query = refs.input.value.trim();
-  const URL = `https://pixabay.com/api/?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${currentPage}`;
 
-  try {
-    const res = await axios.get(URL);
-    const { hits, totalHits } = res.data;
-    createImages(hits, totalHits);
-    scrollSmootly();
-    lightbox.refresh();
-
-    if(hits.length < 40){ 
-      Notify.failure(`No more images to fetch.`, {
-        position: 'center-top',
-      });
-      return;
-    }
-
-
-    observerTarget = refs.gallery.lastElementChild;
-    observer.observe(observerTarget);
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 function scrollSmootly() {
   const { height: cardHeight } =
@@ -99,11 +76,13 @@ function createImages (hits,total) {
     position: 'center-top',
   })
   scoller=2;}
-  if(total===0){ 
+  if(total===0&& scoreError===1){ 
     Notify.failure(`Sorry, there are no images matching your search query. Please try again.`, {
     position: 'center-top',
   });
+  scoreError=2;
   return;
+  
 }
   const markup = hits.map(({downloads,likes,comments,views,tags,webformatURL,largeImageURL}) => {
     return `<div class="photo-card">
@@ -129,6 +108,30 @@ function createImages (hits,total) {
 refs.gallery.insertAdjacentHTML('beforeend', markup);
 lightbox.refresh();
 };
+
+
+async function onScrollHandler() {
+  observer.unobserve(observerTarget);
+  currentPage += 1;
+  const query = refs.input.value.trim();
+  const URL = `https://pixabay.com/api/?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${currentPage}`;
+
+  try {
+    const res = await axios.get(URL);
+    const { hits, totalHits } = res.data;
+    createImages(hits, totalHits);
+    scrollSmootly();
+    lightbox.refresh();
+
+  
+
+
+    observerTarget = refs.gallery.lastElementChild;
+    observer.observe(observerTarget);
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 
 
