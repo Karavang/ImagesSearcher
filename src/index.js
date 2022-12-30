@@ -1,6 +1,7 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import "simplelightbox/dist/simple-lightbox.min.css";
 import axios from 'axios';
+ 
 
 const API_KEY = '32188250-5588add6a92db6c3bf4a2a30f';
 let currentPage = 1;
@@ -41,8 +42,8 @@ try {
   const res = await axios.get(URL);
   const { hits, total } = res.data
   createImages(hits, total);
-  if(hits.length === total&& scoreError===1){ 
-    Notify.failure(`No more images to fetch.`, {
+  if(hits.length < 40 && scoreError===1){ 
+    Notify.failure(`We're sorry, but you've reached the end of search results.`, {
       position: 'center-top',
     });
     scoreError=2;
@@ -76,7 +77,7 @@ function createImages (hits,total) {
     position: 'center-top',
   })
   scoller=2;}
-  if(total===0&& scoreError===1){ 
+  if(total===0 && scoreError===1){ 
     Notify.failure(`Sorry, there are no images matching your search query. Please try again.`, {
     position: 'center-top',
   });
@@ -122,10 +123,6 @@ async function onScrollHandler() {
     createImages(hits, totalHits);
     scrollSmootly();
     lightbox.refresh();
-
-  
-
-
     observerTarget = refs.gallery.lastElementChild;
     observer.observe(observerTarget);
   } catch (error) {
