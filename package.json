@@ -1,15 +1,15 @@
 {
-  "name": "goit-js-hw-11",
+  "name": "imagessearcher",
   "version": "2.0.0",
   "description": "",
-  "homepage": "https://Karavang.github.io/goit-js-hw-11",
+  "homepage": "https://Karavang.github.io/ImagesSearcher",
   "scripts": {
     "start": "parcel src/*.html",
-    "build": "parcel build src/*.html --public-url /goit-js-hw-11/"
+    "build": "parcel build src/*.html --public-url /ImagesSearcher/"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Karavang/goit-js-hw-11"
+    "url": "https://github.com/Karavang/ImagesSearcher"
   },
   "keywords": [],
   "author": "Evgeny Shestak <shestakevgeny10@gmail.com>",
